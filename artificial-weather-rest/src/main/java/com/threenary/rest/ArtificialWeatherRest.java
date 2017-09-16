@@ -28,9 +28,11 @@ public class ArtificialWeatherRest {
 	 * @return String that will be returned as a text/plain response.
 	 */
 	@GET
-	@Produces(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
 	public String getIt() {
-		return "Hello World!";
+		String response = new Gson().toJson("Hello Artificial World!");
+		System.out.println("REQUEST /cities: " + response);
+		return response;
 	}
 
 	/**
