@@ -9,41 +9,59 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.threenary.weather.domain.DataModel;
+import com.threenary.repository.YahooRepository;
+import com.threenary.weather.domain.CityList;
+import com.threenary.weather.domain.Condition;
 import com.threenary.weather.provider.YahooFetcher;
 
 /**
- * Root resource (exposed at "myresource" path)
+ * Root resource (exposed at "artificial" path)
  */
-@Path("/artificial")
+@Path("artificial")
 public class ArtificialWeatherRest {
-	
-	YahooFetcher fetcher = new YahooFetcher();
 
-    /**
-     * Method handling HTTP GET requests. The returned object will be sent
-     * to the client as "text/plain" media type.
-     *
-     * @return String that will be returned as a text/plain response.
-     */
-    @GET
-    @Produces(MediaType.TEXT_PLAIN)
-    public String getIt() {   	
-        return "Got it!";
-    }
+	YahooRepository repo = new YahooRepository(new YahooFetcher());
 
-    @GET
+	/**
+	 * Health check
+	 *
+	 * @return String that will be returned as a text/plain response.
+	 */
+	@GET
+	@Produces(MediaType.TEXT_PLAIN)
+	public String getIt() {
+		return "Hello World!";
+	}
+
+	/**
+	 * Returns the weather for the given city
+	 * 
+	 * @param city
+	 * 
+	 * @throws IOException
+	 */
+	@GET
 	@Path("{city}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public DataModel getSurveyResults(@PathParam("city") String city) throws IOException {
-		JsonObject json = fetcher.fetchWeatherForCity(city);
-				
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		String jsonOutput = gson.toJson(json);
-    	System.out.println(jsonOutput);   	
-    			
-		return fetcher.getObjectModel(json);
+	public Condition getWeather(@PathParam("city") String city) throws IOException {
+		Condition response = repo.getWeather(city);
+		System.out.println(String.format("REQUEST /%s: %s", city, new Gson().toJson(response)));
+		return response;
 	}
+
+	/**
+	 * Returns the weather for the given city
+	 * 
+	 * @param city
+	 */
+	@GET
+	@Path("cities")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getCities() {
+		String response = new Gson().toJson(CityList.getInstance());
+		System.out.println("REQUEST /cities: " + response);
+		return response;
+	}
+	
+
 }

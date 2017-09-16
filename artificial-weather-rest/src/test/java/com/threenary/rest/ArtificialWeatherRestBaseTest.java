@@ -1,32 +1,44 @@
 package com.threenary.rest;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.MockitoAnnotations.initMocks;
+
+import java.util.List;
+
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 
 import org.glassfish.grizzly.http.server.HttpServer;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.threenary.main.Main;
-
-import static org.junit.Assert.assertEquals;
+import com.threenary.repository.YahooRepository;
+import com.threenary.weather.domain.City;
 
 public class ArtificialWeatherRestBaseTest {
-	
-	private final String PATH = "PATH: ";
-	private final String SEPARATOR = "\n==========================\n";
 
-    private HttpServer server;
-    private WebTarget target;
-    
-    @Before
+	private HttpServer server;
+
+	private WebTarget target;
+
+	@Mock
+	private YahooRepository repository;
+
+	@Before
 	public void setUp() throws Exception {
 		server = Main.startServer();
 		Client c = ClientBuilder.newClient();
 		target = c.target(Main.BASE_URI);
+
+		initMocks(this);
 	}
 
 	@After
@@ -34,33 +46,24 @@ public class ArtificialWeatherRestBaseTest {
 		server.shutdownNow();
 	}
 
-	protected void logging(String url, String log) {
-		System.out.println(
-				new StringBuffer().append(PATH).append(url).append(SEPARATOR).append(log).append(SEPARATOR).toString());
+	/**
+	 * Test health check
+	 */
+	@Test
+	public void testHealthcare() {
+		String responseMsg = target.path("artificial").request().get(String.class);
+		assertThat("Hello World!", is(equalTo(responseMsg)));
 	}
 
-//    @Before
-//    public void setUp() throws Exception {
-//        // start the server
-//        server = Main.startServer();
-//        // create the client
-//        Client c = ClientBuilder.newClient();
-//
-//        // uncomment the following line if you want to enable
-//        // support for JSON in the client (you also have to uncomment
-//        // dependency on jersey-media-json module in pom.xml and Main.startServer())
-//        // --
-//        // c.configuration().enable(new org.glassfish.jersey.media.json.JsonJaxbFeature());
-//
-//        target = c.target(Main.BASE_URI);
-//    }
+	/**
+	 * Test cities
+	 */
+	@Test
+	public void testGetCities() {
+		String responseMsg = target.path("artificial/cities").request().get(String.class);
 
-    /**
-     * Test to see that the message "Got it!" is sent in the response.
-     */
-    @Test
-    public void testGetIt() {
-        String responseMsg = target.path("myresource").request().get(String.class);
-        assertEquals("Got it!", responseMsg);
-    }
+		List<City> cities = new Gson().fromJson(responseMsg, new TypeToken<List<City>>() {
+		}.getType());
+		assertThat(cities.size(), is(equalTo(8)));
+	}
 }
