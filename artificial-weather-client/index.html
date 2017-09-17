@@ -19,21 +19,20 @@
         <p class="lead">Welcome to this Artificial Solution for Weather check. <strong>Be aware, winter is coming.</strong></p>
       </div>
       <div class="mt-4"></div>
-      <div class="row">
-        <div class="col-md-4">
-            <select id="cities" class="dropdown"></select>
+      <div>
+        <div class="dropdown">
+          <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Cities
+          <span class="caret"></span></button>
+          <ul class="dropdown-menu">
+          </ul>
         </div>
-        <div class="col-md-4">
-          <div class="text-center">
-            <div id="weather">resultado</div>
-          </div>
+        <div class="text-right">
+          <button type="button" class="btn btn-default">Healtcheck</button>
+          <div id="check"></div>
         </div>
-        <div class="col-md-4">
-          <div class="text-center">
-            <button type="button" class="btn btn-default">Healtcheck</button>
-            <div id="check"></div>
-          </div>
-        </div>
+      </div>
+      <div class="text-center">
+        <div id="weather"></div>
       </div>
     </div>
   </body>

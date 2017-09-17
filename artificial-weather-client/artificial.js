@@ -1,29 +1,52 @@
 $(document).ready(function() {
 
-  $("#cities").change(function(){
-    $("#cities option[value='0']").remove();
+    function showData(data, city){
+        $("#weather").empty();
+        $("#weather").append($('<p align=center><strong>'+city+'</strong></p>'))
+        $("#weather").append($('<p><strong>Time:</strong> '+data.date+'</p>'))
+        $("#weather").append($('<p><strong>Temperature:</strong> '+data.temp+'°C</p>'))
+        $("#weather").append($('<p><strong>Condicion:</strong> '+data.text+'</p>'))
+    }
 
-    $.ajax({
-        url: "http://localhost:8080/artificial/"+$( "#cities" ).val(),
-        dataType: "json",
-        success: function( data, textStatus, jqXHR ){
-            $('#weather').empty();
-            $('#weather').append(data);
-        }
+    function loading(){
+        $("#weather").empty();
+        $("#weather").append($('<p>Loding data...</p>'))
+    }
+
+    $(".dropdown-menu").on("click", "li", function(event){
+          loading();
+          var city = $(this).children("a").attr("id");
+          $.ajax({
+               url: "http://localhost:8080/artificial/"+city,
+               dataType: "json",
+               success: function( data, textStatus, jqXHR ){
+
+
+
+                     showData(data, city);
+               }
+          });
     });
-  });
+
+    $(".btn-default").click(function(){
+        $.ajax({
+          url: "http://localhost:8080/artificial",
+          dataType: "json",
+          success: function( data, textStatus, jqXHR ){
+              $('#check').empty();
+              $('#check').append(data);
+          }
+      });
+    });
 
   $.ajax({
       url: "http://localhost:8080/artificial/cities",
       dataType: "json",
       success: function( data, textStatus, jqXHR ){
         $.each(data, function(i, obj) {
-            $('#cities').append($('<option>', {
-                value: obj.name,
-                text: obj.name
-            }));
+            $(".dropdown-menu").append($('<li><a href=# id=' +obj.name+'>'+obj.name+'</a></li>'));
         });
-        $("<option>", {value:'0', text:'Select city', selected:true}).prependTo('#cities');
+
       }
   });
 
@@ -36,6 +59,6 @@ $(document).ready(function() {
             $('#check').empty();
             $('#check').append(data);
         }
-      });
+    });
   });
 });
