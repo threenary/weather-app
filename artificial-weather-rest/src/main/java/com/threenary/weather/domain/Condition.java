@@ -48,7 +48,7 @@ public class Condition {
 
 	@JsonProperty("temp")
 	public String getTemp() {
-		return temp;
+		return String.valueOf((Double.valueOf(temp) - 32) * (5.0 / 9.0));
 	}
 
 	@JsonProperty("temp")

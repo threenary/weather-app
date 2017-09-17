@@ -12,15 +12,12 @@ import com.google.gson.Gson;
 import com.threenary.repository.YahooRepository;
 import com.threenary.weather.domain.CityList;
 import com.threenary.weather.domain.Condition;
-import com.threenary.weather.provider.YahooFetcher;
 
 /**
  * Root resource (exposed at "artificial" path)
  */
 @Path("artificial")
 public class ArtificialWeatherRest {
-
-	YahooRepository repo = new YahooRepository(new YahooFetcher());
 
 	/**
 	 * Health check
@@ -46,7 +43,7 @@ public class ArtificialWeatherRest {
 	@Path("{city}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Condition getWeather(@PathParam("city") String city) throws IOException {
-		Condition response = repo.getWeather(city);
+		Condition response = YahooRepository.getInstance().getWeather(city);
 		System.out.println(String.format("REQUEST /%s: %s", city, new Gson().toJson(response)));
 		return response;
 	}
@@ -64,6 +61,5 @@ public class ArtificialWeatherRest {
 		System.out.println("REQUEST /cities: " + response);
 		return response;
 	}
-	
 
 }

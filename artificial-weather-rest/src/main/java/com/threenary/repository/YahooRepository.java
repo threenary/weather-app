@@ -16,16 +16,31 @@ import com.threenary.weather.provider.YahooFetcher;
 
 public class YahooRepository {
 
-	private YahooFetcher fetcher;
 	
-	/**
-	 * Constructor
-	 * 
-	 * @param fetcher
-	 */
-	public YahooRepository(YahooFetcher fetcher) {
-		super();
-		this.fetcher = fetcher;
+//	/**
+//	 * Constructor
+//	 * 
+//	 * @param fetcher
+//	 */
+//	public YahooRepository(YahooFetcher fetcher) {
+//		super();
+//		this.fetcher = fetcher;
+//	}
+
+	private static YahooRepository instance = null;
+
+	private YahooFetcher fetcher;
+
+
+	protected YahooRepository() {
+		this.fetcher = new YahooFetcher();
+	}
+
+	public static YahooRepository getInstance() {
+		if (instance == null) {
+			instance = new YahooRepository();
+		}
+		return instance;
 	}
 
 	/**
@@ -64,7 +79,7 @@ public class YahooRepository {
 		YahooDataModel data = cache().get(city);
 		if (fetchNeeded(data)) {
 			data = fetchWeather(city);
-		}else {
+		} else {
 			System.out.println(String.format("CATCHED DATA /%s", city));
 		}
 		return data;
@@ -109,9 +124,9 @@ public class YahooRepository {
 			return false;
 		}
 		long diffInMillies = new Date().getTime() - parseDate.getTime();
-		return diffInMillies > 3600*60*60;
+		return diffInMillies > 3600 * 60 * 60;
 	}
-	
+
 	private WeatherCache cache() {
 		return WeatherCache.getInstance();
 	}

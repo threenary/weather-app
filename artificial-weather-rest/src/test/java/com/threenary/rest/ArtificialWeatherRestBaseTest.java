@@ -1,9 +1,9 @@
 package com.threenary.rest;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.MockitoAnnotations.initMocks;
 
 import java.util.List;
 
@@ -15,12 +15,10 @@ import org.glassfish.grizzly.http.server.HttpServer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.threenary.main.Main;
-import com.threenary.repository.YahooRepository;
 import com.threenary.weather.domain.City;
 
 public class ArtificialWeatherRestBaseTest {
@@ -29,16 +27,11 @@ public class ArtificialWeatherRestBaseTest {
 
 	private WebTarget target;
 
-	@Mock
-	private YahooRepository repository;
-
 	@Before
 	public void setUp() throws Exception {
 		server = Main.startServer();
 		Client c = ClientBuilder.newClient();
 		target = c.target(Main.BASE_URI);
-
-		initMocks(this);
 	}
 
 	@After
@@ -52,7 +45,7 @@ public class ArtificialWeatherRestBaseTest {
 	@Test
 	public void testHealthcare() {
 		String responseMsg = target.path("artificial").request().get(String.class);
-		assertThat("Hello World!", is(equalTo(responseMsg)));
+		assertThat(responseMsg, containsString("Hello Artificial World!"));
 	}
 
 	/**
