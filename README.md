@@ -17,3 +17,4 @@ mvn exec:java
 ```
 http://localhost:8080/artificial/{city}
 ```
+5. Within the client folder there is a simple index.html that will allow you test the rest calls
